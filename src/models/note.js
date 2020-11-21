@@ -1,12 +1,17 @@
 const mongoose = require("mongoose");
-const taskSchema = new mongoose.Schema(
+const noteSchema = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      trim: true,
+      default: "Undefined"
+    },
     description: {
       type: String,
       trim: true,
       required: true,
     },
-    completed: {
+    priority: {
       type: Boolean,
       required: false,
       default: false,
@@ -21,6 +26,6 @@ const taskSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-const Task = mongoose.model("Task", taskSchema);
+const Note = mongoose.model("Note", noteSchema);
 
-module.exports = Task;
+module.exports = Note;

@@ -2,22 +2,13 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Task = require("./task");
+const Note = require("./note");
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
       trim: true,
-    },
-    age: {
-      type: Number,
-      default: 0,
-      validate(value) {
-        if (value < 0) {
-          throw new Error("Age must be a positive number");
-        }
-      },
     },
     email: {
       type: String,
@@ -59,8 +50,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 //virtual property - it's a relationship
-userSchema.virtual("tasks", {
-  ref: "Task", //referencing the task db
+userSchema.virtual("notes", {
+  ref: "Note", //referencing the note db
   localField: "_id",
   foreignField: "author",
 });
@@ -99,11 +90,11 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
-//Delete user tasks when users are removed
+//Delete user notes when users are removed
 
 userSchema.pre("remove", async function (next) {
   const user = this;
-  await Task.deleteMany({ author: user._id });
+  await Note.deleteMany({ author: user._id });
   next();
 });
 const User = mongoose.model("User", userSchema);

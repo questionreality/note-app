@@ -15,10 +15,11 @@ router.post(`/users`, async (req, res) => {
   try {
     await user.save();
     const token = await user.generateAuthToken();
-    sendWelcomeEmail(user.email, user.name);
+    // sendWelcomeEmail(user.email, user.name);
     res.status(201).send({ user, token });
   } catch (e) {
-    res.status(400).send(e);
+    console.log(e);
+    res.status(400).send({ error: e });
   }
 });
 router.post("/users/login", async (req, res) => {
@@ -27,10 +28,13 @@ router.post("/users/login", async (req, res) => {
       req.body.email,
       req.body.password
     );
+    if (!user) {
+      return res.status(400).send({ error: "no such user" });
+    }
     const token = await user.generateAuthToken();
     res.send({ token, user });
   } catch (e) {
-    res.status(400).send();
+    res.status(500).send();
   }
 });
 router.post("/users/logout", auth, async (req, res) => {
@@ -74,7 +78,7 @@ router.get("/users/:id", async (req, res) => {
 });
 router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age"];
+  const allowedUpdates = ["name", "email", "password"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
@@ -122,6 +126,7 @@ router.post(
       .resize({ width: 250, height: 250 })
       .png()
       .toBuffer();
+    //sharp is for processing, multer is for uploading
     req.user.avatar = buffer;
     await req.user.save();
     res.send();

@@ -1,40 +1,39 @@
-const Task = require("../models/task");
+const Note = require("../models/note");
 const express = require("express");
 const router = new express.Router();
 const auth = require("../middleware/auth");
-router.post("/tasks", auth, async (req, res) => {
-  const task = new Task({
+router.post("/notes", auth, async (req, res) => {
+  const note = new Note({
     ...req.body,
     author: req.user._id,
   });
   try {
-    await task.save();
-    res.status(201).send(task);
+    await note.save();
+    res.status(201).send(note);
   } catch (e) {
     res.status(400).send(error);
   }
 });
-// GET /tasks?completed=true
+// GET /notes?priority=true
 // limit skip
 // query string is always a string
-// GET /tasks?limit=10&skip=0 -> first 10 results
-// GET /tasks?sortBy=createdAt:desc
-router.get("/tasks", auth, async (req, res) => {
+// GET /notes?limit=10&skip=0 -> first 10 results
+// GET /notes?sortBy=createdAt:desc
+router.get("/notes", auth, async (req, res) => {
   try {
     const match = {};
     const sort = {};
-    if (req.query.completed) {
-      match.completed = req.query.completed === "true" ? true : false;
+    if (req.query.priority) {
+      match.priority = req.query.priority === "true" ? true : false;
       //converting string to boolean
     }
     if (req.query.sortBy) {
       const parts = req.query.sortBy.split(":");
       sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
-      
     }
     await req.user
       .populate({
-        path: "tasks",
+        path: "notes",
         match,
         options: {
           limit: parseInt(req.query.limit),
@@ -44,27 +43,27 @@ router.get("/tasks", auth, async (req, res) => {
         },
       })
       .execPopulate();
-    res.send(req.user.tasks);
+    res.send(req.user.notes);
   } catch (e) {
     res.status(500).send();
   }
 });
-router.get("/tasks/:id", auth, async (req, res) => {
+router.get("/notes/:id", auth, async (req, res) => {
   try {
-    const task = await Task.findOne({
+    const note = await Note.findOne({
       _id: req.params.id,
       author: req.user.id,
     });
-    if (!task) {
+    if (!note) {
       return res.status(404).send("Not found");
     }
-    res.send(task);
+    res.send(note);
   } catch (e) {
     res.status(500).send();
   }
 });
-router.patch("/tasks/:id", auth, async (req, res) => {
-  const allowedUpdates = ["description", "completed"];
+router.patch("/notes/:id", auth, async (req, res) => {
+  const allowedUpdates = ["description", "priority"];
   const updates = Object.keys(req.body);
   const isValid =
     updates.filter((update) => {
@@ -78,30 +77,30 @@ router.patch("/tasks/:id", auth, async (req, res) => {
     return res.status(400).send("That value doesn't exist!");
   } else {
     try {
-      const task = await Task.findOne({
+      const note = await Note.findOne({
         _id: req.params.id,
         author: req.user.id,
       });
-      if (!task) return res.status(404).send("Not found");
+      if (!note) return res.status(404).send("Not found");
 
-      updates.forEach((update) => (task[update] = req.body[update]));
-      await task.save();
-      return res.send(task);
+      updates.forEach((update) => (note[update] = req.body[update]));
+      await note.save();
+      return res.send(note);
     } catch (e) {
       res.status(400).send();
     }
   }
 });
-router.delete("/tasks/:id", auth, async (req, res) => {
+router.delete("/notes/:id", auth, async (req, res) => {
   try {
-    const task = await Task.findOneAndDelete({
+    const note = await Note.findOneAndDelete({
       _id: req.params.id,
       author: req.user.id,
     });
-    if (!task) {
+    if (!note) {
       return res.status(404).send();
     }
-    res.send(task);
+    res.send(note);
   } catch (e) {
     res.status(500).send(e);
   }
