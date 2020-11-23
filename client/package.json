@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@mui-treasury/styles": "^1.13.0",
     "axios": "^0.21.0",
     "jwt-decode": "^3.1.2",
     "react": "^17.0.1",

@@ -16,6 +16,7 @@ import Note from "./pages/note";
 import Notes from "./pages/notes";
 import User from "./pages/user";
 import AuthRoute from "./utils/AuthRoute";
+import Navbar from "./components/layout/Navbar";
 
 const theme = createMuiTheme(themeFile);
 const UserContext = React.createContext([{}, () => {}]);
@@ -41,11 +42,13 @@ function App() {
       //TO-DO : get-user-data
     }
   }
+  const navbarHtml = state.authenticated === true ? <Navbar /> : null;
   return (
     <MuiThemeProvider theme={theme}>
       <StateContext.Provider value={[state, setState]}>
         <UserContext.Provider value={[user, setUser]}>
           <NoteContext.Provider value={[note, setNote]}>
+            {navbarHtml}
             <Router>
               <Switch>
                 <Route exact path="/">

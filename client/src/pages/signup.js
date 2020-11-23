@@ -13,32 +13,23 @@ import {
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import { StateContext, UserContext, NoteContext } from "../App";
+import Copyright from "../components/layout/Copyright";
+
 import axios from "axios";
 import { getUser } from "../utils/actions";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="/signup">
-        Task-Manager
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
+    color: "#eee",
+
     alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -56,10 +47,6 @@ export default function SignUp(props) {
   const [note, setNote] = useContext(NoteContext);
   const onSubmit = (e) => {
     e.preventDefault();
-    // setState({
-    //   ...state,
-    //   loading: true,
-    // });
     const newUserData = {
       name: user.name,
       email: user.email,
@@ -92,44 +79,78 @@ export default function SignUp(props) {
           Sign up
         </Typography>
         <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={4}>
             <Grid item xs={12}>
               <TextField
-                autoComplete="fname"
-                name="name"
-                variant="outlined"
-                required
-                fullWidth
                 id="name"
+                name="name"
+                type="name"
                 label="Name"
-                autoFocus
+                // helperText={errors.password}
+                // error={errors.password ? true : false}
+                className={classes.textField}
+                value={user.name}
                 onChange={handleChange}
+                fullWidth
+                InputProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
               />
             </Grid>
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
                 id="email"
-                label="Email Address"
                 name="email"
-                autoComplete="email"
+                type="email"
+                label="Email"
+                // helperText={errors.email}
+                // error={errors.email ? true : false}
+                className={classes.textField}
+                value={user.email}
                 onChange={handleChange}
+                fullWidth
+                InputProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
                 id="password"
-                autoComplete="current-password"
+                name="password"
+                type="password"
+                label="Password"
+                // helperText={errors.password}
+                // error={errors.password ? true : false}
+                className={classes.textField}
+                value={user.password}
                 onChange={handleChange}
+                fullWidth
+                InputProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: "white",
+                  },
+                }}
               />
             </Grid>
           </Grid>
