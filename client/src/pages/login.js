@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Avatar,
   Button,
@@ -12,8 +12,8 @@ import {
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
-import { getUser } from "../utils/actions";
-import { StateContext, UserContext, NoteContext } from "../App";
+import { loginUser } from "../store/actions";
+import { StateContext } from "../App";
 import theme from "../utils/theme";
 import Copyright from "../components/layout/Copyright";
 
@@ -40,9 +40,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login(props) {
   const classes = useStyles();
-  const [state, setState] = useContext(StateContext);
-  const [user, setUser] = useContext(UserContext);
-  const [note, setNote] = useContext(NoteContext);
+  const { state, dispatch } = useContext(StateContext);
+  const [user, setUser] = useState({ email: null, password: null });
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -50,15 +49,12 @@ export default function Login(props) {
       email: user.email,
       password: user.password,
     };
-    getUser({
-      user,
-      setUser,
-      state,
-      setState,
-      formData: userData,
+    loginUser({
+      userData,
       route: "/users/login",
+      history: props.history,
+      dispatch,
     });
-    props.history.push("/notes");
   };
   const handleChange = (e) => {
     setUser({

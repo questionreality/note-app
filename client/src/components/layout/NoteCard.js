@@ -1,5 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -7,8 +8,10 @@ import {
   Typography,
   Paper,
   TextField,
+  MenuItem,
+  Grid,
+  CssBaseline,
 } from "@material-ui/core";
-import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -46,39 +49,58 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "24px",
     lineHeight: "40px",
   },
+  menuItem: {
+    whiteSpace: "normal",
+  },
 }));
 
 export default function NoteCard({ data }) {
   const classes = useStyles();
-
+  const notesRoute = {
+    pathname: `/notes/${data._id}`,
+    param1: data,
+  };
   return (
     <Grid item xs={12} sm={6} lg={4}>
-      <Paper className={classes.paper}>
-        <Typography
-          variant="heading1"
-          color="textPrimary"
-          component="p"
-          className={classes.title}
-        >
-          {data.title}
-        </Typography>
+      <MenuItem
+        component={Link}
+        to={notesRoute}
+        className={classes.menuItem}
+        // disableGutters
+        // component="div"
+      >
+        <Paper className={classes.paper} elevation={3}>
+          <Typography
+            variant="inherit"
+            color="textPrimary"
+            component="p"
+            className={classes.title}
+            style={{
+              overflow: "hidden",
+              resize: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {data.title}
+          </Typography>
 
-        <Typography
-          variant="body1"
-          color="textSecondary"
-          component="p"
-          style={{
-            overflow: "hidden",
-            wordWrap: "break-word",
-            resize: "none",
-            height: "120px",
-          }}
-          className={classes.description}
-        >
-          {data.description}
-        </Typography>
-      </Paper>
-      {/* </Card> */}
+          <Typography
+            variant="inherit"
+            color="textSecondary"
+            component="p"
+            style={{
+              overflow: "hidden",
+              wordWrap: "break-word",
+              resize: "none",
+              height: "120px",
+            }}
+            className={classes.description}
+          >
+            {data.description}
+          </Typography>
+        </Paper>
+        {/* </Card> */}
+      </MenuItem>
     </Grid>
   );
 }

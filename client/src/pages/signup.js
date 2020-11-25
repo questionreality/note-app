@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext,useState } from "react";
 import {
   Avatar,
   Button,
@@ -16,7 +16,7 @@ import { StateContext, UserContext, NoteContext } from "../App";
 import Copyright from "../components/layout/Copyright";
 
 import axios from "axios";
-import { getUser } from "../utils/actions";
+import { loginUser } from "../store/actions";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,25 +42,22 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp(props) {
   const classes = useStyles();
-  const [state, setState] = useContext(StateContext);
-  const [user, setUser] = useContext(UserContext);
-  const [note, setNote] = useContext(NoteContext);
+  const { state, dispatch } = useContext(StateContext);
+  const [user, setUser] = useState({ name: null, email: null, password: null });
+
   const onSubmit = (e) => {
     e.preventDefault();
-    const newUserData = {
+    const userData = {
       name: user.name,
       email: user.email,
       password: user.password,
     };
-    getUser({
-      user,
-      setUser,
-      state,
-      setState,
-      formData: newUserData,
-      route: "/users",
+    loginUser({
+      userData: userData,
+      route: "/users/login",
+      history: props.history,
+      dispatch,
     });
-    props.history.push("/notes");
   };
   const handleChange = (e) => {
     setUser({

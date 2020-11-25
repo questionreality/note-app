@@ -16,6 +16,7 @@ const theme = {
   typography: {
     useNextVariants: true,
   },
-  overrides: {},
+  overrides: {
+  },
 };
 export default theme;

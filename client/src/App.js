@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -17,84 +17,84 @@ import Notes from "./pages/notes";
 import User from "./pages/user";
 import AuthRoute from "./utils/AuthRoute";
 import Navbar from "./components/layout/Navbar";
+import reducer from "./store/reducers";
+import { getUserData, logoutUser } from "./store/actions";
+import { SET_AUTHENTICATED } from "./store/types";
 
 const theme = createMuiTheme(themeFile);
-const UserContext = React.createContext([{}, () => {}]);
-const NoteContext = React.createContext([{}, () => {}]);
-const StateContext = React.createContext([{}, () => {}]);
+const StateContext = React.createContext();
 axios.defaults.baseURL = "http://localhost:3000";
+const initialState = {
+  notes: [],
+  note: {},
+  loading: false,
+  user: {},
+  authenticated: false,
+  maxNumberOfPages: null,
+};
 
 function App() {
-  const [state, setState] = useState({ authenticated: false });
-  const [user, setUser] = useState({});
-  const [note, setNote] = useState({});
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const token = localStorage.getItem("token");
   if (token) {
     const decodedToken = jwtDecode(token);
+    //not sure if the token has an expiry - need to check
     if (decodedToken.exp * 1000 < Date.now()) {
-      //TO-DO : logout user
       window.location.href = `${window.location.origin}/login`;
+      dispatch(logoutUser());
     } else {
-      //TO-DO :  set-authenticated
-      axios.defaults.headers.common["Authorization"] = token;
-      if (!state.authenticated) setState({ ...state, authenticated: true });
-      //TO-DO : get-user-data
+      if (state.authenticated === false) {
+        dispatch({ type: SET_AUTHENTICATED });
+        axios.defaults.headers.common["Authorization"] = token;
+        getUserData(dispatch);
+      }
     }
   }
   const navbarHtml = state.authenticated === true ? <Navbar /> : null;
   return (
     <MuiThemeProvider theme={theme}>
-      <StateContext.Provider value={[state, setState]}>
-        <UserContext.Provider value={[user, setUser]}>
-          <NoteContext.Provider value={[note, setNote]}>
-            {navbarHtml}
-            <Router>
-              <Switch>
-                <Route exact path="/">
-                  {state.authenticated ? (
-                    <Redirect to="/notes" />
-                  ) : (
-                    <Redirect to="/signup" />
-                  )}
-                </Route>
-                <AuthRoute
-                  exact
-                  path="/login"
-                  component={Login}
-                  routeType="auth"
-                />
-                <AuthRoute
-                  exact
-                  path="/signup"
-                  component={Signup}
-                  routeType="auth"
-                />
-                <AuthRoute
-                  exact
-                  path="/notes"
-                  component={Notes}
-                  routeType="private"
-                />
-                <AuthRoute
-                  exact
-                  path="/notes/:id"
-                  component={Note}
-                  routeType="private"
-                />
-                <AuthRoute
-                  exact
-                  path="/user"
-                  component={User}
-                  routeType="private"
-                />
-              </Switch>
-            </Router>
-          </NoteContext.Provider>
-        </UserContext.Provider>
+      <StateContext.Provider value={{ state, dispatch }}>
+        {navbarHtml}
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              {state.authenticated ? (
+                <Redirect to="/notes" />
+              ) : (
+                <Redirect to="/signup" />
+              )}
+            </Route>
+            <AuthRoute exact path="/login" component={Login} routeType="auth" />
+            <AuthRoute
+              exact
+              path="/signup"
+              component={Signup}
+              routeType="auth"
+            />
+            <AuthRoute
+              exact
+              path="/notes"
+              component={Notes}
+              routeType="private"
+            />
+            <AuthRoute
+              exact
+              path="/notes/:id"
+              component={Note}
+              routeType="private"
+            />
+            <AuthRoute
+              exact
+              path="/user"
+              component={User}
+              routeType="private"
+            />
+          </Switch>
+        </Router>
       </StateContext.Provider>
     </MuiThemeProvider>
   );
 }
 
-export { StateContext, UserContext, NoteContext, App };
+export { StateContext, App };
