@@ -1,4 +1,4 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Avatar,
   Button,
@@ -10,10 +10,10 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import NoteIcon from "@material-ui/icons/Note";
 import { makeStyles } from "@material-ui/core/styles";
 import { StateContext, UserContext, NoteContext } from "../App";
-import Copyright from "../components/layout/Copyright";
+import Copyright from "../components/Copyright";
 
 import axios from "axios";
 import { loginUser } from "../store/actions";
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SignUp(props) {
   const classes = useStyles();
   const { state, dispatch } = useContext(StateContext);
-  const [user, setUser] = useState({ name: null, email: null, password: null });
+  const [user, setUser] = useState({ name: "", email: "", password: "" });
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -54,7 +54,7 @@ export default function SignUp(props) {
     };
     loginUser({
       userData: userData,
-      route: "/users/login",
+      route: "/users",
       history: props.history,
       dispatch,
     });
@@ -67,10 +67,10 @@ export default function SignUp(props) {
   };
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <NoteIcon style={{ fill: "#222" }} />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign up

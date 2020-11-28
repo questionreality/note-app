@@ -16,9 +16,9 @@ import Note from "./pages/note";
 import Notes from "./pages/notes";
 import User from "./pages/user";
 import AuthRoute from "./utils/AuthRoute";
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/Navbar";
 import reducer from "./store/reducers";
-import { getUserData, logoutUser } from "./store/actions";
+import { getUserData, logOutUser } from "./store/actions";
 import { SET_AUTHENTICATED } from "./store/types";
 
 const theme = createMuiTheme(themeFile);
@@ -42,7 +42,7 @@ function App() {
     //not sure if the token has an expiry - need to check
     if (decodedToken.exp * 1000 < Date.now()) {
       window.location.href = `${window.location.origin}/login`;
-      dispatch(logoutUser());
+      dispatch(logOutUser());
     } else {
       if (state.authenticated === false) {
         dispatch({ type: SET_AUTHENTICATED });
@@ -55,8 +55,9 @@ function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <StateContext.Provider value={{ state, dispatch }}>
-        {navbarHtml}
         <Router>
+          {navbarHtml}
+
           <Switch>
             <Route exact path="/">
               {state.authenticated ? (

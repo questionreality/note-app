@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: Buffer,
     },
+    noteCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

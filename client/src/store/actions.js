@@ -3,6 +3,7 @@ import {
   SET_UNAUTHENTICATED,
   SET_USER,
   LOADING_USER,
+  LOGOUT_USER,
   //UI reducer types
   SET_ERRORS,
   LOADING_UI,
@@ -36,14 +37,6 @@ export const loginUser = async ({ userData, history, route, dispatch }) => {
     });
   }
 };
-export const logoutUser = async (dispatch) => {
-  localStorage.removeItem("token");
-  delete axios.defaults.headers.common["Authorization"];
-  await axios.post("/users/logout");
-  dispatch({
-    type: SET_UNAUTHENTICATED,
-  });
-};
 
 export const getUserData = async (dispatch) => {
   dispatch({ type: LOADING_USER });
@@ -72,7 +65,29 @@ export const editUserDetails = async (userDetails, dispatch) => {
     console.log(e);
   }
 };
+export const logOutUser = async (dispatch, history) => {
+  try {
+    await axios.post("/users/logout");
+    delete axios.defaults.headers.common["Authorization"];
+    localStorage.clear();
+    dispatch({ type: LOGOUT_USER });
 
+    // history.push("/login");
+  } catch (e) {
+    console.log(e);
+  }
+};
+export const logOutAllUser = async (dispatch, history) => {
+  try {
+    await axios.post("/users/logoutAll");
+    delete axios.defaults.headers.common["Authorization"];
+    localStorage.clear();
+    dispatch({ type: LOGOUT_USER });
+    // history.push("/login");
+  } catch (e) {
+    console.log(e);
+  }
+};
 //NOTE ACTIONS
 
 export const getNotes = async (dispatch, queryParams) => {
@@ -85,6 +100,7 @@ export const getNotes = async (dispatch, queryParams) => {
       type: SET_NOTES,
       payload: res.data,
     });
+    // dispatch({ type: STOP_LOADING_UI });
   } catch (e) {
     dispatch({
       type: SET_ERRORS,
@@ -115,6 +131,33 @@ export const editNote = async ({ dispatch, data, id }) => {
     //   type: EDIT_NOTE,
     //   payload: res.data,
     // });
+  } catch (e) {
+    console.log(e);
+  }
+};
+export const postNote = async ({ data, dispatch }) => {
+  try {
+    dispatch({ type: LOADING_UI });
+    const res = await axios.post("/notes", data);
+    dispatch({
+      type: POST_NOTE,
+      payload: res.data,
+    });
+    // dispatch(clearErrors());
+    dispatch({ type: STOP_LOADING_UI });
+  } catch (e) {
+    console.log(e);
+    // dispatch({
+    //   type: SET_ERRORS,
+    //   payload: e.response.data,
+    // });
+  }
+};
+export const deleteNote = async (dispatch, id) => {
+  try {
+    console.log(id);
+    const res = await axios.delete(`/notes/${id}`);
+    dispatch({ type: DELETE_NOTE, payload: res.data });
   } catch (e) {
     console.log(e);
   }

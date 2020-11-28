@@ -4,7 +4,7 @@ const noteSchema = new mongoose.Schema(
     title: {
       type: String,
       trim: true,
-      default: "Undefined"
+      default: "Undefined",
     },
     description: {
       type: String,

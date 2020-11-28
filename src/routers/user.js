@@ -16,6 +16,7 @@ router.post(`/users`, async (req, res) => {
     await user.save();
     const token = await user.generateAuthToken();
     // sendWelcomeEmail(user.email, user.name);
+    console.log(user);
     res.status(201).send({ user, token });
   } catch (e) {
     console.log(e);
@@ -45,6 +46,7 @@ router.post("/users/logout", auth, async (req, res) => {
     await req.user.save();
     res.send();
   } catch (e) {
+    console.log(e);
     res.status(500).send();
   }
 });
@@ -54,6 +56,7 @@ router.post("/users/logoutAll", auth, async (req, res) => {
     await req.user.save();
     res.send();
   } catch (e) {
+    console.log(e);
     res.status(500).send();
   }
 });

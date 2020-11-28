@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, Fragment } from "react";
 //TO-DO : Pagination
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, MenuItem } from "@material-ui/core";
@@ -6,7 +6,7 @@ import Pagination from "@material-ui/lab/Pagination";
 import PaginationItem from "@material-ui/lab/PaginationItem";
 
 import { StateContext } from "../App";
-import NoteCard from "../components/layout/NoteCard";
+import NoteCard from "../components/NoteCard";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
@@ -36,13 +36,13 @@ function Notes() {
   }, []);
   useEffect(() => {
     getNotes(dispatch, queryParams);
+    console.log("useEffect notes triggered");
   }, [queryParams, dispatch]);
   // useEffect(() => {
   //   if (state.maxNumberOfPages === null) getUserData(dispatch);
   // }, [dispatch]);
 
   const handleChange = (event, value) => {
-    console.log("value", value);
     setPage(value);
     setQueryParams({ limit: value * 6, skip: (value - 1) * 6 });
   };
@@ -60,10 +60,11 @@ function Notes() {
         )}
       />
     );
-  return state.notes === null ? (
+  console.log(state);
+  return state.loading === true ? (
     <div>Loading...</div>
   ) : (
-    <>
+    <Fragment>
       <div className={classes.root}>
         <Grid container spacing={2}>
           {state.notes &&
@@ -71,7 +72,7 @@ function Notes() {
         </Grid>
       </div>
       {paginationMarkup}
-    </>
+    </Fragment>
   );
 }
 

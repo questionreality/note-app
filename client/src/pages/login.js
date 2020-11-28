@@ -10,12 +10,12 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import NoteIcon from "@material-ui/icons/Note";
 import { makeStyles } from "@material-ui/core/styles";
 import { loginUser } from "../store/actions";
 import { StateContext } from "../App";
 import theme from "../utils/theme";
-import Copyright from "../components/layout/Copyright";
+import Copyright from "../components/Copyright";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -64,10 +64,10 @@ export default function Login(props) {
   };
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
+          <NoteIcon style={{ fill: "#222" }} />
         </Avatar>
         <Typography component="h1" variant="h5">
           Login

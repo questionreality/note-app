@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   description: {
-    "& .MuiInputBase-inputMultiline": {
+    "& .MuiInputBase-input": {
       color: theme.palette.text.secondary,
 
       // width: "500px",
@@ -107,7 +107,7 @@ function Note(props) {
   console.log(props);
   const classes = useStyles();
   const { state, dispatch } = useContext(StateContext);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ title: "", description: "" });
   const id = props.match.params.id;
 
   useEffect(() => {
@@ -118,23 +118,35 @@ function Note(props) {
       setFormData(state.note);
     }
   }, [state.note, setFormData]);
-  useEffect(() => {
-    window.addEventListener("unload", handleSubmit);
-    return () => {
-      window.removeEventListener("unload", handleSubmit);
-    };
-  }, []);
+  
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData)
+    if (e) e.preventDefault();
+    console.log("handleSubmit");
+    if (state.note !== null)
       editNote({
         dispatch,
         id,
         data: { title: formData.title, description: formData.description },
       });
   };
+
+  useEffect(() => {
+    const unlisten = props.history.listen(() => {
+      // Detecting, user has changed URL
+      handleSubmit();
+    });
+    //submiting form before refresh
+    window.addEventListener("beforeunload", handleSubmit);
+    return () => {
+      //cleanup
+      unlisten();
+      window.removeEventListener("beforeunload", handleSubmit);
+    };
+  }, [handleSubmit]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    console.log(formData);
   };
   return formData ? (
     <div>
@@ -150,6 +162,7 @@ function Note(props) {
                 fullWidth
                 onChange={handleChange}
                 className={clsx(classes.root, classes.title)}
+                multiline
               ></InputBase>
             </Grid>
             {/* <Typography

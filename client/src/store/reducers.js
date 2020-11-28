@@ -15,6 +15,7 @@ import {
   POST_NOTE,
   EDIT_NOTE,
   MARK_IMP,
+  LOGOUT_USER,
 } from "./types";
 
 export default function (state, action) {
@@ -31,17 +32,23 @@ export default function (state, action) {
         note: action.payload,
         loading: false,
       };
-    // case DELETE_TODO: {
-    //   let index = state.todos.findIndex(
-    //     (todo) => todo.todoId === action.payload
-    //   );
-    //   let mutatedTodos = state.todos.slice();
-    //   mutatedTodos.splice(index, 1);
-    //   return {
-    //     ...state,
-    //     todos: [...mutatedTodos],
-    //   };
-    // }
+    case POST_NOTE: {
+      return {
+        ...state,
+        notes: [action.payload, ...state.notes],
+      };
+    }
+    case DELETE_NOTE: {
+      let index = state.notes.findIndex(
+        (note) => note._id === action.payload._id
+      );
+      let mutatedNotes = state.notes.slice(); //copying state.notes
+      mutatedNotes.splice(index, 1); //removing the note at that position
+      return {
+        ...state,
+        notes: [...mutatedNotes],
+      };
+    }
     case SET_ERRORS:
       return {
         ...state,
@@ -73,11 +80,22 @@ export default function (state, action) {
     // case SET_UNAUTHENTICATED:
     //   return initialState;
     case SET_USER:
+      let maxNumberOfPages = Math.ceil(action.payload.noteCount / 6);
+      if (!maxNumberOfPages) maxNumberOfPages = 0;
       return {
         authenticated: true,
         loading: false,
         user: action.payload,
-        maxNumberOfPages: Math.ceil(action.payload.noteCount / 6),
+        maxNumberOfPages,
+      };
+    case LOGOUT_USER:
+      return {
+        notes: [],
+        note: {},
+        loading: false,
+        user: {},
+        authenticated: false,
+        maxNumberOfPages: null,
       };
     case LOADING_USER:
       return {

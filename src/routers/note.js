@@ -8,10 +8,12 @@ router.post("/notes", auth, async (req, res) => {
     author: req.user._id,
   });
   try {
-    await note.save();
+    req.user.noteCount++;
+    await Promise.all([note.save(), req.user.save()]);
     res.status(201).send(note);
   } catch (e) {
-    res.status(400).send(error);
+    console.log(e);
+    res.status(400).send(e);
   }
 });
 // GET /notes?priority=true
@@ -55,6 +57,7 @@ router.get("/notes/:id", auth, async (req, res) => {
       author: req.user.id,
     });
     if (!note) {
+      console.log("not found");
       return res.status(404).send("Not found");
     }
     res.send(note);
@@ -63,7 +66,7 @@ router.get("/notes/:id", auth, async (req, res) => {
   }
 });
 router.patch("/notes/:id", auth, async (req, res) => {
-  const allowedUpdates = ["description", "priority"];
+  const allowedUpdates = ["description", "priority", "title"];
   const updates = Object.keys(req.body);
   const isValid =
     updates.filter((update) => {
@@ -100,8 +103,11 @@ router.delete("/notes/:id", auth, async (req, res) => {
     if (!note) {
       return res.status(404).send();
     }
+    req.user.noteCount--;
+    req.user.save();
     res.send(note);
   } catch (e) {
+    console.log(e);
     res.status(500).send(e);
   }
 });
