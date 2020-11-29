@@ -23,7 +23,7 @@ import { SET_AUTHENTICATED } from "./store/types";
 
 const theme = createMuiTheme(themeFile);
 const StateContext = React.createContext();
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "http://varma-task-app.herokuapp.com/";
 const initialState = {
   notes: [],
   note: {},
