@@ -13,8 +13,7 @@ import {
   Grid,
   CssBaseline,
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { deleteNote } from "../store/actions";
+import DeleteNote from "./DeleteNote";
 import { StateContext } from "../App";
 
 const useStyles = makeStyles((theme) => ({
@@ -56,10 +55,6 @@ const useStyles = makeStyles((theme) => ({
   menuItem: {
     whiteSpace: "normal",
   },
-  delete: {
-    position: "absolute",
-    left: "5%",
-  },
 }));
 
 export default function NoteCard({ data }) {
@@ -78,13 +73,7 @@ export default function NoteCard({ data }) {
         // component="div"
       > */}
       <div style={{ position: "relative" }}>
-        <MyButton
-          onClick={() => deleteNote(dispatch, data._id)}
-          tip="Delete Note"
-          tipClassName={classes.delete}
-        >
-          <DeleteIcon color="secondary" />
-        </MyButton>
+        <DeleteNote noteId={data._id} />
 
         <Link
           to={notesRoute}
