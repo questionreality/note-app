@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "jest --runInBand --detectOpenHandles"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest --runInBand --detectOpenHandles",
+    "deploy": "git push heroku main",
+    "deploy:full": "git add . && git commit -m uibuild && npm run deploy",
+    "heroku-postbuild": "cd src/client && yarn && yarn run build"
   },
   "jest": {
     "testEnvironment": "node"

@@ -7,13 +7,20 @@ const userRouter = require("./routers/user");
 const noteRouter = require("./routers/note");
 const path = require("path");
 const app = express();
-// Serve static files from the React app
-// app.use(express.static(path.join(__dirname, "client/build")));
 app.use(cors());
+const port = process.env.PORT;
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "/client/build")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "/build", "index.html"));
+// });
+console.log(path.join(__dirname, "/client/build", "index.html"));
 app.use(express.json());
 app.use(userRouter, noteRouter);
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname + "/client/build/index.html"));
-// });
-module.exports = app;
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
+});
+app.listen(port, () => {
+  console.log("Server is up on port " + port);
+});
